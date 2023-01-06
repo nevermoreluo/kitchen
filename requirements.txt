@@ -1,0 +1,7 @@
+Django==4.1.4
+djangorestframework==3.14.0
+uritemplate==4.1.1
+PyYAML==6.0
+mysqlclient==2.1.1
+django-filter==22.1
+Markdown==3.4.1
