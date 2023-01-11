@@ -7,6 +7,6 @@ from django.urls import path
 
 from . import views
 
-urlpatterns: list[Any] = [
+urlpatterns: List[Any] = [
     path('', views.index, name='index'),
 ]

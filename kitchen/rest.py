@@ -11,7 +11,7 @@ from services.rest import CloudServiceProviderViewSet
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model: Type[User] = User
-        fields: Iterable[str] | str = ['url', 'username', 'email', 'is_staff']
+        fields = ['url', 'username', 'email', 'is_staff']
 
 
 # ViewSets define the view behavior.
