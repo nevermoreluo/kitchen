@@ -21,7 +21,7 @@ urlpatterns = [
     # Route TemplateView to serve Swagger UI template.
     #   * Provide `extra_context` with view name of `SchemaView`.
     path('', TemplateView.as_view(
-        template_name='swagger-ui.html',
+        template_name='../templates/swagger-ui.html',
         extra_context={'schema_url': 'openapi-schema'}
     ), name='swagger-ui'),
     path('openapi', get_schema_view(

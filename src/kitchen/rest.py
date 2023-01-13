@@ -1,4 +1,4 @@
-from typing import Type, Iterable
+from typing import Type
 
 from rest_framework import routers, serializers, viewsets
 from django.contrib.auth.models import User, UserManager

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ekx)l(f$+c=o&(%1yba#j37z21okxp(uie6g73$5h_q=3x6$t6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "172.17.70.206","kitchen.chenlelun.eu.org"]
 
 
 # Application definition
@@ -75,14 +75,14 @@ WSGI_APPLICATION = 'kitchen.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+# 需要改成读环境变量 django-environ 之类的需要对比一下
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "mydatabase",
         "USER": "root",
         "PASSWORD": "Nevermore",
-        "HOST": "127.0.0.1",
+        "HOST": "db",
         "PORT": 3306
     }
 }
@@ -123,6 +123,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+
+# 设置MEDIA ROOT 和 MEDIA URL
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
