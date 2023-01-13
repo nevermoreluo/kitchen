@@ -6,13 +6,13 @@ volumes: # 自定义数据卷
   media_vol: #定义数据卷同步存放web项目用户上传到media文件夹的数据
   static_vol: #定义数据卷同步存放web项目static文件夹的数据
 
-#networks: # 自定义网络(默认桥接), 不使用links通信
-#  nginx_network:
-#    driver: bridge
-#  db_network:
-#    driver: bridge
-#  redis_network:
-#    driver: bridge
+networks: # 自定义网络(默认桥接), 不使用links通信
+  nginx_network:
+    driver: bridge
+  db_network:
+    driver: bridge
+  redis_network:
+    driver: bridge
 
 services:
 #  redis:
@@ -31,8 +31,8 @@ services:
     image: mysql
     env_file:
       - ./src/.env # 使用了环境变量文件
-#    networks:
-#      - db_network
+    networks:
+      - db_network
     volumes:
       - db_vol:/var/lib/mysql:rw # 挂载数据库数据, 可读可写
       - ./docker/mysql/conf/my.cnf:/etc/mysql/my.cnf # 挂载配置文件
@@ -46,20 +46,18 @@ services:
 
   web:
     build: .
-    ports:
-      - "8000:8000"
-#    expose:
-#      - "8000"
+    expose:
+      - "8000"
     volumes:
       - ./src:/opt/kitchen # 挂载项目代码
       - ./docker/uwsgi.ini:/opt/kitchen/uwsgi.ini
       - static_vol:/opt/kitchen/static # 以数据卷挂载容器内static文件
       - media_vol:/opt/kitchen/media # 以数据卷挂载容器内用户上传媒体文件
       - ./docker/uwsgi:/tmp # 挂载uwsgi日志
-#    networks:
-#      - nginx_network
-#      - db_network
-#      - redis_network
+    networks:
+      - nginx_network
+      - db_network
+      - redis_network
     depends_on:
       db:
         condition: service_healthy
@@ -82,8 +80,8 @@ services:
       - ./docker/nginx/log:/var/log/nginx # 挂载日志
       - static_vol:/usr/share/nginx/html/static # 挂载静态文件
       - media_vol:/usr/share/nginx/html/media # 挂载用户上传媒体文件
-#    networks:
-#      - nginx_network
+    networks:
+      - nginx_network
     depends_on:
       - web
     restart: always
