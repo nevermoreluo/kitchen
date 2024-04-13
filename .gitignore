@@ -1,6 +1,8 @@
 ### Example user template template
 ### Example user template
 
+
+
 ### Django
 **/**/migrations
 src/static/*
@@ -8,7 +10,8 @@ src/static/*
 ###
 
 ### Self define
-docker/nginx/nginx.conf
+*.pid
+src/uwsgi.ini
 ###
 
 

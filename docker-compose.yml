@@ -14,6 +14,11 @@ networks: # 自定义网络(默认桥接), 不使用links通信
   redis_network:
     driver: bridge
 
+# env_file:
+#   - path: ./src/.env.template
+#     required: true # default
+
+
 services:
 #  redis:
 #    image: redis:latest
@@ -30,7 +35,7 @@ services:
   db:
     image: mysql
     env_file:
-      - ./src/.env # 使用了环境变量文件
+      - ./src/.env.template # 使用了环境变量文件
     networks:
       - db_network
     volumes:
@@ -45,19 +50,26 @@ services:
       retries: 10
 
   web:
-    build: .
+    # env_file:
+    #   - ./src/.env.template # 使用了环境变量文件
+    build:
+      context: .
+      args:
+        APP_HOME: /opt/kitchen
     expose:
       - "8000"
+    working_dir: /opt/kitchen
     volumes:
+      # 很奇怪 volume中变量似乎都失效了
       - ./src:/opt/kitchen # 挂载项目代码
-      - ./docker/uwsgi.ini:/opt/kitchen/uwsgi.ini
+      - ./docker/uwsgi/uwsgi.ini:/opt/kitchen/uwsgi.ini
       - static_vol:/opt/kitchen/static # 以数据卷挂载容器内static文件
       - media_vol:/opt/kitchen/media # 以数据卷挂载容器内用户上传媒体文件
-      - ./docker/uwsgi:/tmp # 挂载uwsgi日志
     networks:
       - nginx_network
       - db_network
       - redis_network
+    command: bash -c "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && uwsgi --ini uwsgi.ini"
     depends_on:
       db:
         condition: service_healthy
@@ -70,10 +82,8 @@ services:
   nginx:
     build: ./docker/nginx
     ports:
-      - "80:80"
-      - "443:443"
-    expose:
-      - "80"
+      - "9000:9000"
+      # - "443:443"
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf # 挂载nginx配置文件
       - ./docker/nginx/ssl:/usr/share/nginx/ssl # 挂载ssl证书目录

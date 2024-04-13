@@ -1,5 +1,11 @@
 FROM python:3.10-slim
 
+ARG APP_HOME
+
+RUN sed -i 's#http://deb.debian.org#https://mirrors.ustc.edu.cn#g' /etc/apt/sources.list.d/debian.sources &&\
+    sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources
+
+
 RUN apt-get update && apt-get install -y \
 		gcc \
 		gettext \
@@ -16,21 +22,21 @@ MAINTAINER Nevermore
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ENV APP_HOME=/opt/kitchen
-
 WORKDIR $APP_HOME
 ENV PATH $PATH:$APP_HOME
 ENV TZ="Asia/Shanghai"
 
 COPY ./src/requirements.txt $APP_HOME/requirements.txt
-COPY ./src/docker-entrypoint.sh $APP_HOME/docker-entrypoint.sh
+COPY ./docker/docker-entrypoint.sh /opt/docker-entrypoint.sh
 
-RUN /usr/local/bin/python -m pip install --upgrade pip &&\
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ &&\
+    pip config set install.trusted-host mirrors.aliyun.com &&\
+    /usr/local/bin/python -m pip install --upgrade pip &&\
     cd $APP_HOME &&\
     pip install -r requirements.txt &&\
     pip install uwsgi &&\
-    sed -i 's/\r//' docker-entrypoint.sh && \
-    chmod +x docker-entrypoint.sh
+    sed -i 's/\r//' /opt/docker-entrypoint.sh && \
+    chmod +x /opt/docker-entrypoint.sh
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/opt/docker-entrypoint.sh"]
 
